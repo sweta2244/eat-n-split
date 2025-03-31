@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import PeopleList from "./Components/PeopleList";
 import SplitBox from "./Components/SplitBox";
+import AddFriend from "./Components/AddFriend";
 
 function App() {
   const initialFriends = [
@@ -24,24 +25,40 @@ function App() {
       balance: 0,
     },
   ];
-  const [select, setSelect] = useState({});
-  const [isSelected, setIsSelected] = useState(true);
-
-  function handleSelect(data) {
-    setSelect(data);
-    setIsSelected(!isSelected);
+  const [friends,setFriends]=useState(initialFriends);
+  const [selection,setSelection]=useState(null);
+  const [showAddFriend,setShowAddFriend]=useState(false);
+  
+  function handleShowAddFriend(){
+    setShowAddFriend(!showAddFriend);
   }
+  function handleSelection(data){
+    setSelection(data);
+  }
+  function handleSubmission(payer,expense,frndexpense,idd,balance1){
+    console.log("payer,expense,frndexpense,idd,balance",payer,expense,frndexpense,idd,balance1);
+    if (payer==="you")
+      {setFriends(friends.map((item)=>item.id===idd?{...item,balance:balance1-frndexpense}:item))}
+    else
+      {setFriends(friends.map((item)=>item.id===idd?{...item,balance:balance1+Number(expense)}:item))}
+  }
+  function handleAddFriend(data){
+    setFriends((prev)=>[...prev,{id:crypto.randomUUID(),name:data.name,image:data.image,balance:0}])
+  }
+  console.log(friends);
 
   return (
-    <div style={{ display: "flex", gap: "30px" }}>
-      <PeopleList
-        initialdata={initialFriends}
-        select={select}
-        handleSelect={handleSelect}
-        isSelected={isSelected}
-      />
-      <SplitBox  />
-    </div>
+   <div className="main-div">
+     <div className="eat-split">
+        <div>
+          <PeopleList friends={friends} handleSelection={handleSelection} selection={selection}/>
+          <AddFriend handleShowAddFriend={handleShowAddFriend} show={showAddFriend} handleAddFriend={handleAddFriend}/>
+        </div>
+        <div className="split-box">
+          <SplitBox selection={selection} handleSubmission={handleSubmission}/>
+        </div>
+     </div>
+   </div>
   );
 }
 

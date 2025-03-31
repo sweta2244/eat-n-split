@@ -1,37 +1,38 @@
-// import React, { useState } from "react";
-
 
 export default function PeopleList({
-  initialdata,
-  select,
-  handleSelect,
-  isSelected
+ friends,
+ handleSelection,
+ selection
 }) {
-  // const [addFriend, setAddFriend] = useState([]);
+
+function handleMessage(data){
+  if (data.balance>0)
+    return `you owe ${data.balance}`
+  else if(data.balance<0)
+    return `${data.name} owes ${Math.abs(data.balance)}`
+  else
+    return "even"
+}
 
   return (
     <div>
-       {initialdata.map((data, index) => (
-        <div key={index} style={{ display: "flex", gap: "100px" }}>
-          <div style={{ display: "flex", gap: "20px" }}>
+       {friends.map((data) => (
+        <div key={data.id} className="main-individual-friend">
+          <div className="individual-friend">
             <img src={data.image} alt="image" />
-            <div>
-              <p>{data.name}</p>
-              {/* <p>{message}</p> */}
+            <div className="friend-description">
+              <p style={{fontWeight:"1000"}}>{data.name}</p>
+              <p>{handleMessage(data)}</p>
             </div>
           </div>
-          <button
-            onClick={() => {
-              handleSelect(data);
-            }}
+          <button className="btn"
+          onClick={()=>{selection?.id===data.id?handleSelection(null):handleSelection(data);}}
           >
-            {select.id===data.id && isSelected ? "Select" : "Close"}
+          {data.id===selection?.id?"Close":"Select"}
+          {console.log(selection?.id)}
           </button>
-          {/* {handleSelect({})} */}
         </div>
       ))}
-      <button>Add friend</button>
     </div>
   );
 }
-

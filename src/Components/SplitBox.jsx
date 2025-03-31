@@ -1,48 +1,34 @@
-import React, { useState } from 'react';
-import "./SplitBox.css";
+import React, {useState } from 'react';
 
-export default function SplitBox({isSelected,selectedInfo}) {
-  const [bill,setBill]=useState(0);
-  const [expense,setExpense]=useState(0);
- const frexpense=bill-expense;
-
-  function handleBill(i){
-    setBill(i);
-  }
-  function handleExpense(j){
-    setExpense(j);
-  }
-  function handleSubmit(){
-    
-  }
+export default function SplitBox({selection,handleSubmission}) {
+ const [bill,setBill]=useState(0);
+ const [expense,setExpense]=useState(0);
+ const [payer,setPayer]=useState("you");
+ 
+ if (selection===null) return;
   return (
-    <>
-        {console.log(selectedInfo)}
-        {isSelected && (<div className="form">
-            <form onSubmit={handleSubmit}>
-                <h2>SPLIT A BILL WITH {selectedInfo.name}</h2>
-                <div>
-                    <label>💰 Bill value</label>
-                    <input type='number' onChange={(e)=>{handleBill(e.target.value)}}/>
-                </div>
-                <div>
-                    <label>🧍‍♀️ Your expense</label>
-                    <input type='number' onChange={(e)=>{handleExpense(e.target.value)}}/>
-                </div>
-                <div>
-                    <label>👫 {selectedInfo.name}'s expense</label>
-                    <input type='number' defaultValue={frexpense}/>
-                </div>
-                <div>
-                    <label>🤑 Who is paying the bill</label>
-                    <select>
-                        <option>You</option>
-                        <option>{selectedInfo.name}</option>
-                    </select>
-                </div>
-                <button type='submit'>Split bill</button>
-            </form>
-        </div>)}
-    </>
+    <div className="form">
+      <form onSubmit={(e)=>{e.preventDefault();handleSubmission(payer,expense,bill-expense,selection?.id,selection?.balance);}}>
+        <h2>SPLIT A BILL WITH {selection?.name}</h2>
+        <div className='split-bill-flex'>
+          <div className='labels'>
+            <p>💰 Bill value </p>
+            <p>🧍‍♀️ Your expense </p>
+            <p> 👫{selection?.name}'s expense</p>
+            <p>🤑 Who is paying the bill </p>
+          </div>
+          <div className='input'>
+            <input type='number' onChange={(e)=>setBill(e.target.value)}/><br/>
+            <input type='number' onChange={(e)=>setExpense(e.target.value)}/><br/>
+            <input type='number' value={bill-expense}/><br/>
+            <select onChange={(e)=>setPayer(e.target.value)}>
+              <option value="you">You</option>
+              <option value={selection?.name}>{selection?.name}</option>
+            </select>
+          </div>
+        </div>
+        <input type="submit" value="Split bill" className='split-bill-btn'/>
+      </form>
+    </div>
   )
 }
